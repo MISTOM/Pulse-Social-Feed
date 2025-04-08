@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { LIKE_POST, UNLIKE_POST } from '../utils/graphql';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 
 interface PostProps {
@@ -47,7 +47,19 @@ const Post: React.FC<PostProps> = ({
     }
   };
 
-  const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+  // Fix for the date formatting issue
+  const formatDate = () => {
+    try {
+      // Parse the ISO date string first
+      const date = parseISO(createdAt);
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'recently'; // Fallback value
+    }
+  };
+
+  const formattedDate = formatDate();
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
