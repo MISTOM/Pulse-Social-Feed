@@ -14,16 +14,22 @@ async function startServer() {
   // Create Express application
   const app = express();
 
-
   app.use(cors({
-    origin: '*',
+    origin: ['https://pulse-social-feed-fe.vercel.app', 'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
-  // Handle preflight OPTIONS requests
-  app.options('*', cors());
+  // Handle OPTIONS preflight requests explicitly
+  app.options('*', (req, res) => {
+    // Set CORS headers explicitly
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.status(204).end();
+  });
 
   app.use(express.json());
   app.use(authenticateUser);
@@ -46,10 +52,7 @@ async function startServer() {
   server.applyMiddleware({
     //@ts-ignore
     app,
-    cors: {
-      origin: '*',
-      credentials: true,
-    }
+    cors: false
   });
 
   // Start the server
