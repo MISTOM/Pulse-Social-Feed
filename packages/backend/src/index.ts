@@ -15,7 +15,11 @@ async function startServer() {
   const app = express();
 
   // Apply middleware
-  app.use(cors());
+ // Apply middleware with updated CORS configuration
+ app.use(cors({
+  origin: process.env.FRONTEND_URL || ['https://pulse-social-feed-fe.vercel.app', 'http://localhost:5173'],
+  credentials: true
+}));
   app.use(express.json());
   app.use(authenticateUser);
 
