@@ -14,12 +14,37 @@ async function startServer() {
   // Create Express application
   const app = express();
 
-  // Apply middleware
- // Apply middleware with updated CORS configuration
- app.use(cors({
-  origin: process.env.FRONTEND_URL || ['https://pulse-social-feed-fe.vercel.app', 'http://localhost:5173'],
-  credentials: true
-}));
+
+  // Define allowed origins
+  const allowedOrigins = ['https://pulse-social-feed-fe.vercel.app', 'http://localhost:5173'];
+
+  // If FRONTEND_URL is set in environment, add it to allowed origins
+  if (process.env.FRONTEND_URL) {
+    if (!allowedOrigins.includes(process.env.FRONTEND_URL)) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
+  }
+
+  // Apply CORS middleware with proper configuration
+  app.use(cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+
+  // Handle preflight OPTIONS requests explicitly
+  app.options('*', cors());
+
   app.use(express.json());
   app.use(authenticateUser);
 
@@ -30,17 +55,16 @@ async function startServer() {
     context: ({ req }) => {
       return {
         prisma,
-        user: req.user, // Added by auth middleware
+        user: req.user,
       };
     },
   });
 
   await server.start();
-  
-  // Apply Apollo middleware to Express
+
 
   //@ts-ignore
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   // Start the server
   const PORT = process.env.PORT || 4000;
