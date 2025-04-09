@@ -15,34 +15,14 @@ async function startServer() {
   const app = express();
 
 
-  // Define allowed origins
-  const allowedOrigins = ['https://pulse-social-feed-fe.vercel.app', 'http://localhost:5173'];
-
-  // If FRONTEND_URL is set in environment, add it to allowed origins
-  if (process.env.FRONTEND_URL) {
-    if (!allowedOrigins.includes(process.env.FRONTEND_URL)) {
-      allowedOrigins.push(process.env.FRONTEND_URL);
-    }
-  }
-
-  // Apply CORS middleware with proper configuration
   app.use(cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
-  // Handle preflight OPTIONS requests explicitly
+  // Handle preflight OPTIONS requests
   app.options('*', cors());
 
   app.use(express.json());
@@ -63,8 +43,13 @@ async function startServer() {
   await server.start();
 
 
-  //@ts-ignore
-  server.applyMiddleware({ app, cors: false });
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin: '*',
+      credentials: true,
+    }
+  });
 
   // Start the server
   const PORT = process.env.PORT || 4000;
