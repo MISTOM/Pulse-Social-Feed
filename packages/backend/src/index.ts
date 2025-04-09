@@ -44,6 +44,7 @@ async function startServer() {
 
 
   server.applyMiddleware({
+    //@ts-ignore
     app,
     cors: {
       origin: '*',
