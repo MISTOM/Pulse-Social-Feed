@@ -2,16 +2,13 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import prisma from './utils/prisma';
 import { typeDefs } from './graphql/schema';
 import { resolvers } from './resolvers';
 import { authenticateUser } from './middleware/auth';
 
 // Load environment variables
 dotenv.config();
-
-// Initialize Prisma client
-export const prisma = new PrismaClient();
 
 async function startServer() {
   // Create Express application
@@ -37,6 +34,8 @@ async function startServer() {
   await server.start();
   
   // Apply Apollo middleware to Express
+
+  //@ts-ignore
   server.applyMiddleware({ app });
 
   // Start the server

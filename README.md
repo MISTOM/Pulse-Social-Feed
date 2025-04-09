@@ -8,8 +8,6 @@ This is a monorepo project with the following structure:
 
 - `packages/frontend`: React/TypeScript frontend built with Vite and styled with Tailwind CSS
 - `packages/backend`: Node.js/Express backend with GraphQL API and Prisma ORM
-- `packages/shared`: Shared code between frontend and backend
-
 ## Features
 
 - User authentication (register, login, logout)

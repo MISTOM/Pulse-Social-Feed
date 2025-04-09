@@ -7,6 +7,10 @@ interface User {
   name?: string;
 }
 
+/**
+ * Authentication context type definition.
+ * Provide authentication state and methods to the components.
+ */
 interface AuthContextType {
   user: User | null;
   token: string | null;
