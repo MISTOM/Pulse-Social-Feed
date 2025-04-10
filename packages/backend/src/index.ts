@@ -20,7 +20,7 @@ app.options('/*', (req, res) => {
     'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
     'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
   });
-  res.status(204).send(); // No content for OPTIONS
+  res.status(204).send();
 });
 app.use(express.json());
 app.use(authenticateUser);
@@ -37,21 +37,33 @@ const server = new ApolloServer({
   },
 });
 
-// Start Apollo Server and apply middleware
-async function initializeServer() {
+// Initialize server synchronously
+const initializeServer = async () => {
   await server.start();
   server.applyMiddleware({
     //@ts-ignore
     app,
-    path: '/', 
+    path: '/',
     cors: false,
   });
-}
 
-// Initialize server
+  // Define port for server
+  const PORT = process.env.PORT || 4000;
+
+  // Start the server
+  app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🔍 Test endpoint available at http://localhost:${PORT}/test`);
+  });
+};
+
+// Run initialization
 initializeServer().catch((error) => {
   console.error('Failed to initialize server:', error);
+  process.exit(1);
 });
 
-
-export default app;
+// Add a test route to verify Express is running
+app.get('/test', (req, res) => {
+  res.send('Server is alive!');
+});
