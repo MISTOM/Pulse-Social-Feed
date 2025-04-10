@@ -1,6 +1,12 @@
 {
   "version": 2,
   "buildCommand": "npx prisma generate && npx prisma migrate deploy && npm run build",
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
