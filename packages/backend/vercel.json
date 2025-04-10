@@ -2,7 +2,14 @@
   "version": 2,
   "buildCommand": "npx prisma generate && npx prisma migrate deploy && npm run build",
   "rewrites": [
-    { "source": "/(.*)", "destination": "dist/index.js" }
+    {
+      "source": "/(.*)",
+      "destination": "dist/index.js"
+    },
+    {
+      "source": "/graphql",
+      "destination": "dist/index.js"
+    }
   ],
   "headers": [
     {
