@@ -12,6 +12,16 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
+// Handle OPTIONS preflight requests
+app.options('/*', (req, res) => {
+  res.set({
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+    'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+  });
+  res.status(204).send(); // No content for OPTIONS
+});
 app.use(express.json());
 app.use(authenticateUser);
 
