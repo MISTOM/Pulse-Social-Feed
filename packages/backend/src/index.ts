@@ -48,7 +48,7 @@ async function startServer() {
   server.applyMiddleware({
     //@ts-ignore
     app,
-    path: '/graphql',
+    path: '/',
     cors: false
   });
 
