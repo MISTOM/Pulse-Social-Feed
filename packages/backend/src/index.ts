@@ -14,10 +14,7 @@ async function startServer() {
   // Create Express application
   const app = express();
 
-  app.use(cors({
-    origin: 'https://pulse-social-feed-fe.vercel.app',
-    credentials: true
-  }));
+  app.use(cors());
 
 
   // Handle OPTIONS preflight requests explicitly
